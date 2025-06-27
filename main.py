@@ -18,7 +18,7 @@ app.register_blueprint(predictions, url_prefix="/predictions")
 app.register_blueprint(chatbot, url_prefix="/chatbot")
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
-redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+redis_client = redis.Redis.from_url("rediss://default:ASvQAAIjcDExZTE5Yzc1MmUwY2I0NDM4YWE3N2FkYWI4MDY5MWQ5ZXAxMA@obliging-warthog-11216.upstash.io:6379")
 
 def listen_data_stream():
     pubsub = redis_client.pubsub()
