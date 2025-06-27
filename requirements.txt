@@ -90,5 +90,6 @@ wrapt==1.17.2
 wsproto==1.2.0
 yarl==1.20.0
 zstandard==0.23.0
-eventlet==0.36.1
+gevent==23.9.1
+gevent-websocket==0.10.1
 gunicorn==22.0.0
