@@ -11,11 +11,7 @@ redis_client = redis.Redis.from_url("rediss://default:ASvQAAIjcDExZTE5Yzc1MmUwY2
 
 @vnindex.route("/")
 def getVNIndex():
-    now = datetime.now()
-    if now.hour < 9 or (now.hour == 9 and now.minute <= 3):
-        today = get_n_nearest_workdays(reference_date=datetime.now() - timedelta(days=1))[0]
-    else:
-        today = get_n_nearest_workdays(reference_date=datetime.now())[0]
+    today = get_n_nearest_workdays(reference_date=datetime.now())[0]
     data = md_get_intraday_OHLC('VNINDEX', today, today)["data"]
     # ratioChange = md_get_daily_index(today, today)["data"][0]["RatioChange"]
     parsed_data = [[convertTradingTimeToString(item["TradingDate"], item["Time"]), item["Value"]] for item in data]
