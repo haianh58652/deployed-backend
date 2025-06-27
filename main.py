@@ -16,7 +16,7 @@ app.register_blueprint(details, url_prefix="/details")
 app.register_blueprint(predictions, url_prefix="/predictions")
 app.register_blueprint(chatbot, url_prefix="/chatbot")
 CORS(app)
-socketio = SocketIO(app, async_mode='eventlet', cors_allowed_origins="*")
+socketio = SocketIO(app, async_mode='threading', cors_allowed_origins="*")
 redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 
 def listen_data_stream():
