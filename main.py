@@ -41,19 +41,18 @@ def handle_connect():
             data.append(parsed_value)
     socketio.emit('connect_update', data)
 
+markets = ["HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "UPCOM"]
+symbols = ["VCI", "SSI", "HDB", "VPB", "BID", "VCB", "FPT", "CMG", "MFS"]
+listen_market_thread = threading.Thread(target=listen_data_stream, daemon=True)
+listen_market_thread.start()
+
+market_thread = threading.Thread(target=get_data_stream, daemon=True)
+# market_thread = threading.Thread(target=simulate_get_data, daemon=True)
+market_thread.start()
+
+predictions_thread = threading.Thread(target=predictListSymbol, daemon=True, args=(symbols, markets))
+predictions_thread.start()
 if __name__ == "__main__":
-    markets = ["HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "UPCOM"]
-    symbols = ["VCI", "SSI", "HDB", "VPB", "BID", "VCB", "FPT", "CMG", "MFS"]
-    listen_market_thread = threading.Thread(target=listen_data_stream, daemon=True)
-    listen_market_thread.start()
-
-    market_thread = threading.Thread(target=get_data_stream, daemon=True)
-    # market_thread = threading.Thread(target=simulate_get_data, daemon=True)
-    market_thread.start()
-
-    predictions_thread = threading.Thread(target=predictListSymbol, daemon=True, args=(symbols, markets))
-    predictions_thread.start()
-
     # md_get_daily_index()
     socketio.run(app)
 	
