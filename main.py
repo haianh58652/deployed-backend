@@ -56,5 +56,5 @@ predictions_thread.start()
 if __name__ == "__main__":
     # md_get_daily_index()
     port = int(os.environ.get('PORT', 5000))
-    socketio.run(app, host='0.0.0.0', port=port, debug=False)
+    socketio.run(app, host='0.0.0.0', port=port, debug=False, allow_unsafe_werkzeug=True)
 	
