@@ -30,7 +30,7 @@ def listen_data_stream():
             socketio.emit('stock_update', data)
 
 @socketio.on("connect")
-def handle_connect():
+def handle_connect(auth=None):
     print("Client connected!!!")
     data = []
     keys = redis_client.keys('stock:*')
