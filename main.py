@@ -17,8 +17,8 @@ app.register_blueprint(details, url_prefix="/details")
 app.register_blueprint(predictions, url_prefix="/predictions")
 app.register_blueprint(chatbot, url_prefix="/chatbot")
 CORS(app)
-socketio = SocketIO(app, async_mode='threading', cors_allowed_origins="*")
-redis_client = redis.Redis.from_url("rediss://default:ASvQAAIjcDExZTE5Yzc1MmUwY2I0NDM4YWE3N2FkYWI4MDY5MWQ5ZXAxMA@obliging-warthog-11216.upstash.io:6379")
+socketio = SocketIO(app, cors_allowed_origins="*")
+redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 
 def listen_data_stream():
     pubsub = redis_client.pubsub()
@@ -42,19 +42,19 @@ def handle_connect():
             data.append(parsed_value)
     socketio.emit('connect_update', data)
 
-markets = ["HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "UPCOM"]
-symbols = ["VCI", "SSI", "HDB", "VPB", "BID", "VCB", "FPT", "CMG", "MFS"]
-listen_market_thread = threading.Thread(target=listen_data_stream, daemon=True)
-listen_market_thread.start()
-
-market_thread = threading.Thread(target=get_data_stream, daemon=True)
-# market_thread = threading.Thread(target=simulate_get_data, daemon=True)
-market_thread.start()
-
-predictions_thread = threading.Thread(target=predictListSymbol, daemon=True, args=(symbols, markets))
-predictions_thread.start()
 if __name__ == "__main__":
+    markets = ["HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "UPCOM"]
+    symbols = ["VCI", "SSI", "HDB", "VPB", "BID", "VCB", "FPT", "CMG", "MFS"]
+    listen_market_thread = threading.Thread(target=listen_data_stream, daemon=True)
+    listen_market_thread.start()
+
+    market_thread = threading.Thread(target=get_data_stream, daemon=True)
+    # market_thread = threading.Thread(target=simulate_get_data, daemon=True)
+    market_thread.start()
+
+    predictions_thread = threading.Thread(target=predictListSymbol, daemon=True, args=(symbols, markets))
+    predictions_thread.start()
+
     # md_get_daily_index()
     port = int(os.environ.get('PORT', 5000))
     socketio.run(app, host='0.0.0.0', port=port, debug=False, allow_unsafe_werkzeug=True)
-	
