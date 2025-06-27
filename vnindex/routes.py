@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import json
 
 vnindex = Blueprint('vnindex', __name__)
-redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+redis_client = redis.Redis.from_url("rediss://default:ASvQAAIjcDExZTE5Yzc1MmUwY2I0NDM4YWE3N2FkYWI4MDY5MWQ5ZXAxMA@obliging-warthog-11216.upstash.io:6379")
 
 @vnindex.route("/")
 def getVNIndex():
