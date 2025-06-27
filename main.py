@@ -33,14 +33,23 @@ def listen_data_stream():
 def handle_connect(auth=None):
     print("Client connected!!!")
     data = []
-    keys = redis_client.keys('stock:*')
-    for key in keys:
-        value = redis_client.hget(key, "data")
-        if value:
-            decoded_value = value.decode('utf-8')
-            parsed_value = json.loads(decoded_value)
-            data.append(parsed_value)
-    socketio.emit('connect_update', data)
+    try:
+        # Use SCAN to iterate over keys matching 'stock:*'
+        cursor = '0'
+        while cursor != 0:
+            cursor, keys = redis_client.scan(cursor=cursor, match='stock:*', count=100)
+            for key in keys:
+                value = redis_client.hget(key, "data")
+                if value:
+                    parsed_value = json.loads(value)
+                    data.append(parsed_value)
+        socketio.emit('connect_update', data)
+    except redis.ConnectionError as e:
+        print(f"Redis connection error: {e}")
+        socketio.emit('connect_update', [])
+    except redis.ResponseError as e:
+        print(f"Redis response error: {e}")
+        socketio.emit('connect_update', [])
 
 if __name__ == "__main__":
     markets = ["HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "UPCOM"]
