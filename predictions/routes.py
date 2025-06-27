@@ -7,7 +7,7 @@ from flask import Blueprint, request, jsonify
 import numpy as np
 import random
 import pandas as pd
-redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+redis_client = redis.Redis.from_url("rediss://default:ASvQAAIjcDExZTE5Yzc1MmUwY2I0NDM4YWE3N2FkYWI4MDY5MWQ5ZXAxMA@obliging-warthog-11216.upstash.io:6379")
 predictions = Blueprint('predictions', __name__)
 import time
 
