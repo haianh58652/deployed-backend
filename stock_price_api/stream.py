@@ -7,7 +7,7 @@ from ssi_fc_data.fc_md_client import MarketDataClient
 from stock_price_api.redis_config import REDIS_HOST, REDIS_PORT
 import redis
 
-redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+redis_client = redis.Redis.from_url("rediss://default:ASvQAAIjcDExZTE5Yzc1MmUwY2I0NDM4YWE3N2FkYWI4MDY5MWQ5ZXAxMA@obliging-warthog-11216.upstash.io:6379")
 
 def get_market_data(message):
 	parsedMessage = {
