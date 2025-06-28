@@ -22,22 +22,14 @@ def predict(prices_30_days):
     if len(prices_30_days) < 5:
         raise ValueError("Cần ít nhất 5 ngày để dự đoán xu hướng.")
 
-    last_prices = prices_30_days[-5:]
-    deltas = [last_prices[i+1] - last_prices[i] for i in range(4)]
-    avg_delta = sum(deltas) / len(deltas)
-
-    volatility = sum(abs(d) for d in deltas) / len(deltas)
-    trend_strength = (deltas[-1] - deltas[0]) / 4  # Đánh giá hướng thay đổi
+    current_price = prices_30_days[-1]
+    max_percent_change = 0.015  # dao động +/-1.5%
 
     predicted = []
-    current_price = prices_30_days[-1]
-
-    for i in range(7):
-        cycle = math.sin(i / 2.0) * volatility * 0.5  # Dao động chu kỳ
-        momentum = trend_strength * (1 + random.uniform(-0.3, 0.3))
-        noise = random.gauss(0, volatility * 0.2)  # Nhiễu nhỏ với phân phối chuẩn
-
-        current_price += momentum + cycle + noise
+    for _ in range(7):
+        percent_change = random.uniform(-max_percent_change, max_percent_change)
+        delta = current_price * percent_change
+        current_price += delta
         predicted.append(round(current_price, 2))
 
     return predicted
