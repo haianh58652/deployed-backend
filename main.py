@@ -9,14 +9,16 @@ from chatbot.routes import chatbot
 from stock_price_api.stream import get_data_stream, simulate_get_data
 from stock_price_api.redis_config import REDIS_HOST, REDIS_PORT
 from predictions.routes import predictions, predictListSymbol
+from werkzeug.middleware.proxy_fix import ProxyFix
 import redis
 import os
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 app.register_blueprint(vnindex, url_prefix="/vnindex")
 app.register_blueprint(details, url_prefix="/details")
 app.register_blueprint(predictions, url_prefix="/predictions")
 app.register_blueprint(chatbot, url_prefix="/chatbot")
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*")
 redis_client = redis.Redis.from_url("rediss://default:ASvQAAIjcDExZTE5Yzc1MmUwY2I0NDM4YWE3N2FkYWI4MDY5MWQ5ZXAxMA@obliging-warthog-11216.upstash.io:6379")
 
