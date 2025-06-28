@@ -75,7 +75,7 @@ def handle_connect(auth=None):
 def handle_disconnect():
     print("Client disconnected")
 
- markets = ["HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "UPCOM"]
+markets = ["HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "UPCOM"]
 symbols = ["VCI", "SSI", "HDB", "VPB", "BID", "VCB", "FPT", "CMG", "MFS"]
     
 # Start background threads
