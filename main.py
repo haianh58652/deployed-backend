@@ -1,5 +1,5 @@
 import threading
-from flask import Flask
+from flask import Flask, redirect, request
 import json
 from flask_socketio import SocketIO
 from flask_cors import CORS
@@ -30,7 +30,12 @@ def listen_data_stream():
         if message['type'] == 'pmessage':
             data = json.loads(message['data'])
             socketio.emit('stock_update', data)
-
+@app.before_request
+def force_https():
+    if not request.is_secure and not app.debug:
+        url = request.url.replace("http://", "https://", 1)
+        return redirect(url, code=301)
+        
 @socketio.on("connect")
 def handle_connect(auth=None):
     print("Client connected!!!")
