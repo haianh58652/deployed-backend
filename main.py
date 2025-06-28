@@ -12,24 +12,39 @@ from predictions.routes import predictions, predictListSymbol
 from werkzeug.middleware.proxy_fix import ProxyFix
 import redis
 import os
+
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+
+# Register blueprints
 app.register_blueprint(vnindex, url_prefix="/vnindex")
 app.register_blueprint(details, url_prefix="/details")
 app.register_blueprint(predictions, url_prefix="/predictions")
 app.register_blueprint(chatbot, url_prefix="/chatbot")
+
+# Configure CORS
 CORS(app, resources={r"/*": {"origins": "*"}})
-socketio = SocketIO(app, cors_allowed_origins="*")
+
+# Configure SocketIO with proper settings for Render
+socketio = SocketIO(
+    app, 
+    cors_allowed_origins="*",
+    async_mode='threading',  # Explicitly set async mode
+    transports=['websocket', 'polling'],  # Allow both transports
+    engineio_logger=True,  # Enable logging for debugging
+    socketio_logger=True   # Enable logging for debugging
+)
+
 redis_client = redis.Redis.from_url("rediss://default:ASvQAAIjcDExZTE5Yzc1MmUwY2I0NDM4YWE3N2FkYWI4MDY5MWQ5ZXAxMA@obliging-warthog-11216.upstash.io:6379")
 
 def listen_data_stream():
     pubsub = redis_client.pubsub()
     pubsub.psubscribe("stock:*:updates")
-
     for message in pubsub.listen():
         if message['type'] == 'pmessage':
             data = json.loads(message['data'])
             socketio.emit('stock_update', data)
+
 @app.before_request
 def force_https():
     if not request.is_secure and not app.debug:
@@ -39,9 +54,9 @@ def force_https():
 @socketio.on("connect")
 def handle_connect(auth=None):
     print("Client connected!!!")
+    print(f"Transport: {request.transport}")  # Debug transport method
     data = []
     try:
-        # Use SCAN to iterate over keys matching 'stock:*'
         cursor = '0'
         while cursor != 0:
             cursor, keys = redis_client.scan(cursor=cursor, match='stock:*', count=100)
@@ -58,19 +73,31 @@ def handle_connect(auth=None):
         print(f"Redis response error: {e}")
         socketio.emit('connect_update', [])
 
+@socketio.on("disconnect")
+def handle_disconnect():
+    print("Client disconnected")
+
 if __name__ == "__main__":
     markets = ["HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "UPCOM"]
     symbols = ["VCI", "SSI", "HDB", "VPB", "BID", "VCB", "FPT", "CMG", "MFS"]
+    
+    # Start background threads
     listen_market_thread = threading.Thread(target=listen_data_stream, daemon=True)
     listen_market_thread.start()
-
+    
     market_thread = threading.Thread(target=get_data_stream, daemon=True)
-    # market_thread = threading.Thread(target=simulate_get_data, daemon=True)
     market_thread.start()
-
+    
     predictions_thread = threading.Thread(target=predictListSymbol, daemon=True, args=(symbols, markets))
     predictions_thread.start()
-
-    # md_get_daily_index()
+    
     port = int(os.environ.get('PORT', 5000))
-    socketio.run(app, host='0.0.0.0', port=port, debug=False, allow_unsafe_werkzeug=True)
+    
+    # Run with proper configuration for Render
+    socketio.run(
+        app, 
+        host='0.0.0.0', 
+        port=port, 
+        debug=False,
+        allow_unsafe_werkzeug=True
+    )
