@@ -30,7 +30,7 @@ socketio = SocketIO(
     app, 
     cors_allowed_origins="*",
     async_mode='threading',  # Explicitly set async mode
-    transports=['websocket', 'polling'],  # Allow both transports
+    transports=['websocket'],  # Allow both transports
     engineio_logger=True,  # Enable logging for debugging
     socketio_logger=True   # Enable logging for debugging
 )
