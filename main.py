@@ -75,8 +75,7 @@ def handle_connect(auth=None):
 def handle_disconnect():
     print("Client disconnected")
 
-if __name__ == "__main__":
-    markets = ["HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "UPCOM"]
+ markets = ["HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "UPCOM"]
     symbols = ["VCI", "SSI", "HDB", "VPB", "BID", "VCB", "FPT", "CMG", "MFS"]
     
     # Start background threads
@@ -90,7 +89,7 @@ if __name__ == "__main__":
     predictions_thread.start()
     
     port = int(os.environ.get('PORT', 5000))
-    
+if __name__ == "__main__":
     # Run with proper configuration for Render
     socketio.run(
         app, 
