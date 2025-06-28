@@ -76,19 +76,19 @@ def handle_disconnect():
     print("Client disconnected")
 
  markets = ["HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "HOSE", "UPCOM"]
-    symbols = ["VCI", "SSI", "HDB", "VPB", "BID", "VCB", "FPT", "CMG", "MFS"]
+symbols = ["VCI", "SSI", "HDB", "VPB", "BID", "VCB", "FPT", "CMG", "MFS"]
     
-    # Start background threads
-    listen_market_thread = threading.Thread(target=listen_data_stream, daemon=True)
-    listen_market_thread.start()
+# Start background threads
+listen_market_thread = threading.Thread(target=listen_data_stream, daemon=True)
+listen_market_thread.start()
     
-    market_thread = threading.Thread(target=get_data_stream, daemon=True)
-    market_thread.start()
+market_thread = threading.Thread(target=get_data_stream, daemon=True)
+market_thread.start()
     
-    predictions_thread = threading.Thread(target=predictListSymbol, daemon=True, args=(symbols, markets))
-    predictions_thread.start()
+predictions_thread = threading.Thread(target=predictListSymbol, daemon=True, args=(symbols, markets))
+predictions_thread.start()
     
-    port = int(os.environ.get('PORT', 5000))
+port = int(os.environ.get('PORT', 5000))
 if __name__ == "__main__":
     # Run with proper configuration for Render
     socketio.run(
