@@ -54,7 +54,6 @@ def force_https():
 @socketio.on("connect")
 def handle_connect(auth=None):
     print("Client connected!!!")
-    print(f"Transport: {request.transport}")  # Debug transport method
     data = []
     try:
         cursor = '0'
