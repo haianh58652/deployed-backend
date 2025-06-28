@@ -28,7 +28,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(
     app, 
     cors_allowed_origins="*",
-    async_mode='eventlet',  # Explicitly set async mode
+    async_mode='threading',  # Explicitly set async mode
     transports=['websocket'],  # Allow both transports
     engineio_logger=True,  # Enable logging for debugging
     socketio_logger=True   # Enable logging for debugging
