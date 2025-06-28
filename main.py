@@ -12,9 +12,6 @@ from predictions.routes import predictions, predictListSymbol
 from werkzeug.middleware.proxy_fix import ProxyFix
 import redis
 import os
-import eventlet
-os.environ["EVENTLET_NO_GREENDNS"] = "yes"
-eventlet.monkey_patch()
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
@@ -31,7 +28,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(
     app, 
     cors_allowed_origins="*",
-    async_mode='eventlet',  # Explicitly set async mode
+    async_mode='threading',  # Explicitly set async mode
     transports=['websocket'],  # Allow both transports
     engineio_logger=True,  # Enable logging for debugging
     socketio_logger=True   # Enable logging for debugging
