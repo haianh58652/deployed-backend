@@ -13,6 +13,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 import redis
 import os
 import eventlet
+os.environ["EVENTLET_NO_GREENDNS"] = "yes"
 eventlet.monkey_patch()
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
